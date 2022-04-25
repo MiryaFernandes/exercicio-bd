@@ -29,6 +29,9 @@
         //recupera o nome do arquivo
         $nameFile = $arquivo['name'];
 
+        //recupera o caminho do diretorio temporario que está o arquivo
+        $tempFile = $arquivo['tmp_name'];
+
         //validaçao para permitir o upload apenas de arquivos de no maximo 5mb
         if($sizeFile <= MAX_FILE_UPLOAD)
         {
@@ -38,13 +41,39 @@
                 //separa somente o nome do arquivo sem a sua extensão
                 $nome = pathinfo($nameFile, PATHINFO_FILENAME);
 
+                //separa somente a extensão do arquivo sem o nome
                 $extensao = pathinfo($nameFile, PATHINFO_FILENAME);
+
+                //existem diversos algoritmos pra criptografia de dados
+                //md5()
+                //sha1()
+                //hash()
+
+                //md5() gerando uma criptografia de dados
+                //uniqid() uma sequencia numerica diferente tendo como base, configuraçoes da maquina
+                //time() pega a hora: minuto: segundo que está sendo feito o upload de fotos
+                $nome = md5($nome.uniqid(time())); 
+
+                //montamos novamente o nome do arquivo com a extensao 
+                $foto = $nomeCripty.".".$extensao;
+
+                if(move_uploaded_file($tempFile, DIRETORIO_FILE_UPLOAD.$foto))
+                {
+                    return $foto;
+                    
+                } else {
+
+                    return array('idErro' => 13,
+                         'message' => 'não foi possivel mover o arquivo para o servidor');
+
+                }
 
             } else {
 
                 return array('idErro' => 12,
                          'message' => 'a extensão do arquivo selecionado não é permitida no upload');
             }
+
         } else {
             return array('idErro' => 10,
                          'message' => 'tamanho de arquivo invalido no upload');

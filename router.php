@@ -37,9 +37,20 @@
 
               //chama a funçao de inserir na controller
               $resposta = inserirContato($_POST);
+              
               //valida o tipo de dados que a controller retornou
               if(is_bool($resposta)) //se for booleano
               {
+                 if(isset($_FILES) && !empty($_FILES))
+                 {
+                    //chama a funçao de inserir na controller
+                    $resposta = inserirContato($_POST, $_FILES);
+
+                 } else {
+
+                  $resposta = insertContato($_POST, null);
+
+                 }
                  //verificar se o retorno foi verdadeiro
                  if($resposta)
                      echo("<script> alert('registro inserido com sucesso!');
