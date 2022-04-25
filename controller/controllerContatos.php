@@ -23,6 +23,8 @@ function inserirContato ($dadosContato)
                //as necessidades de manipulação do BD.
                //obs: criar as chaves do array conforme os nomes dos00 atributos 
                $arrayDados = array (
+
+                   "id" => $id,
                    "nome" => $dadosContato['txtNome'],
                    "telefone" => $dadosContato['txtTelefone'],
                    "celular" => $dadosContato['txtCelular'],
@@ -39,21 +41,62 @@ function inserirContato ($dadosContato)
                     return array('idErro' => 1, 'message' => 'não foi posivel inserir os dados no banco de dados');    
         
         }else 
-            return array('idErro' => 2, 'message' => 'existem campos obrigatorios que nao foram preenchidos'); 
+            return array('idErro' => 2, 'message' => 'existem campos obrigatorios que não foram preenchidos'); 
     }
 
 }
 
 //função para receber dados da view w encainhar para a model(atualizar)
-function atualizarContato ()
+function atualizarContato ($dadosContato, $id)
 {
 
+    //validação para verificar se o objeto está vazio
+    if(!empty($dadosContato))
+    {
 
+        //validaçao de caixa vazia dos elementos nome, celular e email
+        //pois são obrigatorios no bd 
+        if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail'])){
 
+            if(!empty($id) && $id != 0 && is_numeric($id)) {
+               //criaçao do array de dados que sera encaminhado a model,
+               //para inserir no bd, é importante criar este array conforme
+               //as necessidades de manipulação do BD.
+               //obs: criar as chaves do array conforme os nomes dos00 atributos 
+               $arrayDados = array (
+                   "nome" => $dadosContato['txtNome'],
+                   "telefone" => $dadosContato['txtTelefone'],
+                   "celular" => $dadosContato['txtCelular'],
+                   "email" => $dadosContato['txtEmail'],
+                   "obs" => $dadosContato['txtObs'],
+               );
+
+               //import do arquivo d emodelagem para manipular o bd
+               require_once('model/bd/contato.php');
+               //chama a funçao que fara o insert no bd
+                if (insertContato($arrayDados))
+                    return true;
+                else
+                    return array('idErro' => 1, 'message' => 'não foi posivel inserir os dados no banco de dados');   
+            } 
+            
+                else
+
+                     return array ('idErro' => 4,
+                     'message' => 'não é possivel editar o registro sem informar um id válido.'        
+                  );
+        
+        } 
+
+            else 
+                return array('idErro' => 2, 'message' => 'existem campos obrigatorios que não foram preenchidos'); 
+    }
+
+ 
 }
 
 //função para realizar a exclusão de um contato
-function excluirContato ($id)
+function excluirContato($id)
 {
 
 

@@ -32,7 +32,8 @@
             require_once('controller/controllerContatos.php');
 
             //validaçao par identificar o tipo de açao que sera realizada
-            if($action == 'INSERIR'){
+            if($action == 'INSERIR')
+            {
 
               //chama a funçao de inserir na controller
               $resposta = inserirContato($_POST);
@@ -50,6 +51,7 @@
                      echo("<script> alert('".$resposta['message']."');
                      window.history.back();
                      </script>");
+
             } elseif($action == 'DELETAR') 
             {
                //recebe o id do registro que devera ser excluido,
@@ -82,7 +84,8 @@
                   }
 
                }
-            } elseif ($action == 'BUSCAR'){
+            } elseif ($action == 'BUSCAR')
+            {
 
                //recebe o id do registro que devera ser editado,
                //que  foi enviado pela url no link da imagem do
@@ -108,6 +111,31 @@
                //utilizandoo o require iremos apenas importar a tela index,
                //assim não havendo um novo carregamento da pagina
                require_once('index.php');
+
+            } elseif ($action == 'EDITAR')
+            {
+
+                    $idcontato = $_GET['id'];
+      
+                    //chama a funçao de editar na controller
+                    $resposta = atualizarContato($_POST, $idcontato);
+
+                    //valida o tipo de dados que a controller retornou
+                    if(is_bool($resposta)) //se for booleano
+                    {
+
+                       //verificar se o retorno foi verdadeiro
+                       if($resposta)
+                           echo("<script> alert('registro inserido com sucesso!');
+                           window.location.href = 'index.php';
+                           </script>");
+                      
+                     //se o retorno for um array significa que houve erro no processo de inserçao      
+                    } elseif (is_array($resposta))
+                           echo("<script> 
+                                    alert('".$resposta['message']."');
+                                    window.history.back();
+                                 </script>");
 
             }
 

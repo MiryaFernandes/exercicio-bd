@@ -1,5 +1,12 @@
 <?php
 
+    /*//essa variavel foi crida para diferenciar no action do formulario
+    //qual açao deveria ser levada para a router (inserir ou editar).
+    //nas condiçoes abaixo, mudamos o action dessa variavel para
+    //a açao de editar
+    $form = "router.php?component=contatos&action=inserir";*/
+
+    //valida se a utilizaçao de variaveis de sessao esta ativa no servidor
     if(session_status())
     {
         //valida se a variavel de sessao dadosContato nao esta vazia
@@ -11,6 +18,11 @@
             $celular = $_SESSION['dadosContato']['celular'];
             $email = $_SESSION['dadosContato']['email'];
             $obs = $_SESSION['dadosContato']['obs'];
+
+            //mudamos a açao do form para editar o registro no click do botao salvar
+            $form = "router.php?component=contatos&action=editar&id=".$id;
+
+            unset($_SESSION['dadosContato']);
 
         }
 
@@ -34,13 +46,17 @@
                 
             </div>
             <div id="cadastroInformacoes">
-                <form  action="router.php?component=contatos&action=inserir" name="frmCadastro" method="post" >
+                <!-- enctype="multipart/form-data"
+                    essa opçao é obrigatoria para enviar
+                    arquivos do formulario em html para 
+                    o servidor -->
+                <form  action="<?=$form?>" name="frmCadastro" method="post" enctype="multipart/form-data">
                     <div class="campos">
                         <div class="cadastroInformacoesPessoais">
                             <label> Nome: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="text" name="txtNome" value="<?=$nome?>" placeholder="Digite seu Nome" maxlength="100">
+                            <input type="text" name="txtNome" value="<?=isset($nome)?$nome:null?>" placeholder="Digite seu Nome*" maxlength="100">
                         </div>
                     </div>
                                      
@@ -49,7 +65,7 @@
                             <label> Telefone: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="tel" name="txtTelefone" value="<?=$telefone?>">
+                            <input type="tel" name="txtTelefone" value="<?=isset($telefone)?$telefone:null?>" placeholder="Digite seu telefone">
                         </div>
                     </div>
                     <div class="campos">
@@ -57,7 +73,7 @@
                             <label> Celular: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="tel" name="txtCelular" value="<?=$celular?>">
+                            <input type="tel" name="txtCelular" value="<?=isset($celular)?$celular:null?>" placeholder="Digite seu celular*">
                         </div>
                     </div>
                    
@@ -67,15 +83,23 @@
                             <label> Email: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <input type="email" name="txtEmail" value="<?=$email?>">
+                            <input type="email" name="txtEmail" value="<?=isset($email)?$email:null?>" placeholder="Digite seu email*">
                         </div>
+                    </div>
+                    <div class="campos">
+                            <div class="cadastroInformacoesPessoais">
+                                <labe>Escolha um arquivo: </label>
+                            </div>
+                            <div class="cadastroEntradaDados">
+                                <input type="file" name="fleFoto" accept=".jpg, .png, .jpeg, .gif">
+                            </div>
                     </div>
                     <div class="campos">
                         <div class="cadastroInformacoesPessoais">
                             <label> Observações: </label>
                         </div>
                         <div class="cadastroEntradaDeDados">
-                            <textarea name="txtObs" cols="50" rows="7"><?=$obs?></textarea>
+                            <textarea name="txtObs" cols="50" rows="7"><?=isset($obs)?$obs:null?></textarea>
                         </div>
                     </div>
                     <div class="enviar">
