@@ -11,5 +11,5 @@
 
  const EXT_FILE_UPLOAD = array("image/jpg", "image/jpeg", "image/gif", "image/png");
 
- const DIRETORIO_FILE_UPLOAD ="arquivos/";
+ const DIRETORIO_FILE_UPLOAD ="arquivo/";
  ?>

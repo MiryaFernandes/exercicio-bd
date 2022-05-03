@@ -42,7 +42,7 @@
                 $nome = pathinfo($nameFile, PATHINFO_FILENAME);
 
                 //separa somente a extensão do arquivo sem o nome
-                $extensao = pathinfo($nameFile, PATHINFO_FILENAME);
+                $extensao = pathinfo($nameFile, PATHINFO_EXTENSION);
 
                 //existem diversos algoritmos pra criptografia de dados
                 //md5()
@@ -55,7 +55,7 @@
                 $nome = md5($nome.uniqid(time())); 
 
                 //montamos novamente o nome do arquivo com a extensao 
-                $foto = $nomeCripty.".".$extensao;
+                $foto = $nome.".".$extensao;
 
                 if(move_uploaded_file($tempFile, DIRETORIO_FILE_UPLOAD.$foto))
                 {

@@ -13,20 +13,31 @@
 //função para receber dados da view w encainhar para a model(inserir)
 function inserirContato ($dadosContato, $file)
 {
+    $nomeFoto = (string) null;
+    
     //validação para verificar se o objeto está vazio
     if(!empty($dadosContato))
     {
 
         if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail']))
         {
+            //validaçao para identificar se chegou um arquivo para upload
             if($file != null)
             {
 
+                //import da funçao de upload
                 require_once('modulo/upload.php');
-                $resultado = uploadFile($file['fleFoto']);
-                echo($resultado);
-                //var_dump($file['fleFoto']);
-                die;
+
+                //chama a funçao de upload
+                $nomeFoto = uploadFile($file['fleFoto']);
+                
+                if(is_array($nomeFoto))
+                {
+                    //caso aconteça algum erro no processo de upload, funçao ir devolver a 
+                    //seguinte mensagem de erro. esse array sera retornado para a router e
+                    //ela irá exibir a mensagem para o usuario
+                    return $nomeFoto;
+                }
             }
                //criaçao do array de dados que sera encaminhado a model,
                //para inserir no bd, é importante criar este array conforme
@@ -34,12 +45,12 @@ function inserirContato ($dadosContato, $file)
                //obs: criar as chaves do array conforme os nomes dos00 atributos 
                $arrayDados = array (
 
-                   "id" => $id,
                    "nome" => $dadosContato['txtNome'],
                    "telefone" => $dadosContato['txtTelefone'],
                    "celular" => $dadosContato['txtCelular'],
                    "email" => $dadosContato['txtEmail'],
                    "obs" => $dadosContato['txtObs'],
+                   "foto" => $nomeFoto
                );
 
                //import do arquivo d emodelagem para manipular o bd
@@ -60,6 +71,14 @@ function inserirContato ($dadosContato, $file)
 function atualizarContato ($dadosContato, $id)
 {
 
+    //recebe o id enviado pelo arrayDados
+    $id = $arrayDados['id'];
+
+    //recebe a foto enviada pelo arrayDados (nome da foto que ja existe no bd)
+    $foto = $arrayDados['foto'];
+
+    //recebe o objeto de array referente a nova foto que podera ser enviada ao servidor
+    $file = $arrayDados['file'];
     //validação para verificar se o objeto está vazio
     if(!empty($dadosContato))
     {
@@ -69,6 +88,18 @@ function atualizarContato ($dadosContato, $id)
         if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail'])){
 
             if(!empty($id) && $id != 0 && is_numeric($id)) {
+
+                if($file['fleFoto']['name'] != null)
+                {
+                    //import da funçao de upload
+                    require_once('modulo/upload.php');
+
+                    //chama a funçao de upload para enviar a nova foto ao servidor
+                    $novaFoto = uploadFile($file['fleFoto']);
+                    
+                    //permanece a mesma foto no bd
+                    $novaFoto = $foto;
+                }
                //criaçao do array de dados que sera encaminhado a model,
                //para inserir no bd, é importante criar este array conforme
                //as necessidades de manipulação do BD.
@@ -106,19 +137,39 @@ function atualizarContato ($dadosContato, $id)
 }
 
 //função para realizar a exclusão de um contato
-function excluirContato($id)
+function excluirContato($arrayDados)
 {
 
+    //recebo o id do regitro que será excluido
+    $id = $arrayDados['id'];
+
+    //recebe o nome da foto que será excluida da pasta do servidor
+    $foto = $arrayDados['foto'];
 
     //validação para verificar se id contem um numer valido
     if($id != 0 && !empty($id) && is_numeric($id)){
-
+        
         //import do arquivo do contato
         require_once('model/bd/contato.php');
 
+        //import do arquivo de configuraçoes do projeto
+        require_once('modulo/config.php');
+
         //chama a função do model e valida se o retorno foi verdadeiro ou falso
         if (deleteContato($id))
-            return true;
+        {
+            //unlink() - funçao para apagar um arquivo de um diretorio
+            //permite apagar a foto fisicamente do diretorio do servidor
+            if(unlink(DIRETORIO_FILE_UPLOAD.$foto))
+                return true;
+            else
+            return array ('idErro' => 5,
+            'message' => ' o registro do banco de dados foi excluido com sucesso!
+                            porém a imagem não foi excluida do diretorio do servidor!.'        
+         );    
+
+        }
+            
         else
             return array ('idErro' => 3,
                             'message' => 'o banco de dados não pode excluir o registro.'        

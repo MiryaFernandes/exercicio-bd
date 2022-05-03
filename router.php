@@ -34,14 +34,8 @@
             //validaçao par identificar o tipo de açao que sera realizada
             if($action == 'INSERIR')
             {
-
-              //chama a funçao de inserir na controller
-              $resposta = inserirContato($_POST);
               
-              //valida o tipo de dados que a controller retornou
-              if(is_bool($resposta)) //se for booleano
-              {
-                 if(isset($_FILES) && !empty($_FILES))
+               if(isset($_FILES) && !empty($_FILES))
                  {
                     //chama a funçao de inserir na controller
                     $resposta = inserirContato($_POST, $_FILES);
@@ -51,6 +45,9 @@
                   $resposta = insertContato($_POST, null);
 
                  }
+              //valida o tipo de dados que a controller retornou
+              if(is_bool($resposta)) //se for booleano
+              {
                  //verificar se o retorno foi verdadeiro
                  if($resposta)
                      echo("<script> alert('registro inserido com sucesso!');
@@ -69,9 +66,20 @@
                //que  foi enviado pela url no link da imagem do
                //excluir que foi acionado no index 
                $idcontato = $_GET['id'];
+               $foto = $_GET['foto'];
+
+
+               //criamos um array para encaminhar os valores do id e da foto
+               //para a controller
+               $arrayDados = array (
+
+                  "id" => $idcontato,
+                  "foto" => $foto
+
+               );
 
                //chama a função de excluir na conta controller
-               $resposta = excluirContato($idcontato);
+               $resposta = excluirContato($arrayDados);
 
                if(is_bool($resposta))
                {
@@ -127,9 +135,18 @@
             {
 
                     $idcontato = $_GET['id'];
+                    $foto = $_GET['foto'];
+
+
+                     //crria um array contendo o id e o nome da foto parar enviar a controller
+                    $arrayDados = array (
+
+                        "id" => $idcontato,
+                        "foto" => $foto
+                    );
       
                     //chama a funçao de editar na controller
-                    $resposta = atualizarContato($_POST, $idcontato);
+                    $resposta = atualizarContato($_POST, $arrayDados);
 
                     //valida o tipo de dados que a controller retornou
                     if(is_bool($resposta)) //se for booleano
