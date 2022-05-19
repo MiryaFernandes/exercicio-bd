@@ -9,18 +9,24 @@
     //variavel para carregar o nome da foto no banco de dados
     $foto = (string) null;
 
+    //variavel para ser utilizada no carregar dos estados (opção de editar)
+    $idestado = (string) null;
+
     //valida se a utilizaçao de variaveis de sessao esta ativa no servidor
     if(session_status())
     {
         //valida se a variavel de sessao dadosContato nao esta vazia
         if(!empty($_SESSION['dadosContato']))
         {
-            $id = $_SESSION['dadosContato']['id'];
-            $nome = $_SESSION['dadosContato']['nome'];
-            $telefone = $_SESSION['dadosContato']['telefone'];
-            $celular = $_SESSION['dadosContato']['celular'];
-            $email = $_SESSION['dadosContato']['email'];
-            $obs = $_SESSION['dadosContato']['obs'];
+            $id         = $_SESSION['dadosContato']['id'];
+            $nome       = $_SESSION['dadosContato']['nome'];
+            $telefone   = $_SESSION['dadosContato']['telefone'];
+            $celular    = $_SESSION['dadosContato']['celular'];
+            $email      = $_SESSION['dadosContato']['email'];
+            $obs        = $_SESSION['dadosContato']['obs'];
+            $foto       = $_SESSION['dadosContato']['foto'];
+            $idestado   = $_SESSION['dadosContato']['idestado'];
+
 
             //mudamos a açao do form para editar o registro no click do botao salvar
             $form = "router.php?component=contatos&action=editar&id=".$id."$foto=".$foto;
@@ -60,6 +66,34 @@
                         </div>
                         <div class="cadastroEntradaDeDados">
                             <input type="text" name="txtNome" value="<?=isset($nome)?$nome:null?>" placeholder="Digite seu Nome*" maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="campos">
+                        <div class="cadastroInformacoesPessoais">
+                            <label> Estado: </label>
+                        </div>
+                        <div class="cadastroEntradaDeDados">
+                            <select name="sltEstado">
+                                <option value="">Selecione um item:</option>
+                                <?php
+
+                                    //import da controller de estados
+                                    require_once('controller/controllerEstados.php');
+
+                                    //chama a função para carregar todos os estados do bd
+                                    $listEstados = listarEstados();
+                                    foreach($listEstados as $item)
+                                    {
+                                        ?>
+
+                                        <option <?=$idestado==$item['idestado']?'selected':null ?> value="<?=$item['idestado']?>"><?=$item['nome']?></option>
+
+                                        <?php
+                                    }
+
+                                ?>
+                            </select>
                         </div>
                     </div>
                                      
@@ -138,7 +172,8 @@
                 require_once('controller/controllerContatos.php');
 
                 //chama a função qu vai retornar os dados de contato
-                $listContato = listarContato();
+                if($listContato = listarContato())
+                {
 
                 //a estrutura de repetição para retornar os dados do array 
                 //e printar na tela
@@ -170,6 +205,8 @@
 
                 <?php
                     }
+
+                }
                 ?>
                 
                

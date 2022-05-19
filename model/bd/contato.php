@@ -27,7 +27,8 @@ function insertContato($dadosContato)
                 celular,
                 email,
                 obs, 
-                foto)
+                foto,
+                idestado)
              
             values
                 ('".$dadosContato['nome']."',
@@ -35,9 +36,10 @@ function insertContato($dadosContato)
                 '".$dadosContato['celular']."',
                 '".$dadosContato['email']."',
                 '".$dadosContato['obs']."',
-                '".$dadosContato['foto']."');";
+                '".$dadosContato['foto']."',
+                '".$dadosContato['idestado']."');";
 
-       
+  
     //executa o script no bd
     //validaçao para verificar se o script sql esta correto
     if (mysqli_query($conexao, $sql))
@@ -75,7 +77,8 @@ function updateContato($dadosContato)
                 celular = '".$dadosContato['celular']."',
                 email = '".$dadosContato['email']."',
                 obs = '".$dadosContato['obs']."',
-                foto = '".$dadosContato['foto']."'
+                foto = '".$dadosContato['foto']."',
+                idestado = '".$dadosContato['idestado']."'
                 
                 
             where idcontato =".$dadosContato['id'];
@@ -173,8 +176,11 @@ function selectAllContato()
         }
 
         fecharMysql($conexao);
-
-        return $arrayDados;
+        if(isset($arrayDados)){
+            return $arrayDados;
+        } else {
+            return false;
+        }
     }
 
     
@@ -182,42 +188,43 @@ function selectAllContato()
 }
 
 //funçao para buscar um contato no bd atarves do id do registro
-function selectByIdContato($id)
-{
-     //abre a conexao com o bd
-     $conexao = conexaoMysql();
+ function selectByIdContato($id)
+ {
+      //abre a conexao com o bd
+      $conexao = conexaoMysql();
 
-     $sql = "select * from tblcontatos where idcontato =".$id;
+      $sql = "select * from tblcontatos where idcontato =".$id;
  
-     //
-     $result = mysqli_query($conexao, $sql);
+      //
+      $result = mysqli_query($conexao, $sql);
  
  
-     //valida se o bd retornou registros
-     if($result)
-     {
-         //mysql_fetch_assoc() - permite converter os dados do bd
-         //em um array para manipulaçao no php
-         //nesta repetição estamos, convertendo os dados do bd em um array
-         //($rsDados), alem de o proprio while conseguir gerenciar a qtde 
-         //de vezes que devera ser feita a repetiçao
-         if($rsDados = mysqli_fetch_assoc($result)){
+      //valida se o bd retornou registros
+      if($result)
+      {
+          //mysql_fetch_assoc() - permite converter os dados do bd
+          //em um array para manipulaçao no php
+          //nesta repetição estamos, convertendo os dados do bd em um array
+          //($rsDados), alem de o proprio while conseguir gerenciar a qtde 
+          //de vezes que devera ser feita a repetiçao
+          if($rsDados = mysqli_fetch_assoc($result)){
  
-             //cria um array com os dados do bd
-             $arrayDados = array (
-                 "id"        => $rsDados['idcontato'],
-                 "nome"      => $rsDados['nome'],
-                 "telefone"  => $rsDados['telefone'],
-                 "celular"   => $rsDados['celular'],
-                 "email"     => $rsDados['email'],
-                 "obs"       => $rsDados['obs']
-             );
-         }
- 
+              //cria um array com os dados do bd
+              $arrayDados = array (
+                  "id"        => $rsDados['idcontato'],
+                  "nome"      => $rsDados['nome'],
+                  "telefone"  => $rsDados['telefone'],
+                  "celular"   => $rsDados['celular'],
+                  "email"     => $rsDados['email'],
+                  "obs"       => $rsDados['obs'],
+                  "idestado"  => $rsDados['idestado']
+              );
         }
+ 
+         }
          fecharMysql($conexao);
  
-         return $arrayDados;
+          return $arrayDados;
     
-}
+ }
 ?>

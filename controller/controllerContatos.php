@@ -10,6 +10,8 @@
  * 
 */
 
+require_once('modulo/config.php');
+
 //função para receber dados da view w encainhar para a model(inserir)
 function inserirContato ($dadosContato, $file)
 {
@@ -50,7 +52,8 @@ function inserirContato ($dadosContato, $file)
                    "celular" => $dadosContato['txtCelular'],
                    "email" => $dadosContato['txtEmail'],
                    "obs" => $dadosContato['txtObs'],
-                   "foto" => $nomeFoto
+                   "foto" => $nomeFoto,
+                   "idestado" => $dadosContato['sltEstado']
                );
 
                //import do arquivo d emodelagem para manipular o bd
@@ -71,21 +74,23 @@ function inserirContato ($dadosContato, $file)
 function atualizarContato ($dadosContato, $id)
 {
 
+    $statusUpload = (boolean)
+
     //recebe o id enviado pelo arrayDados
-    $id = $arrayDados['id'];
+    $id = $dadosContato['id'];
 
     //recebe a foto enviada pelo arrayDados (nome da foto que ja existe no bd)
-    $foto = $arrayDados['foto'];
+    $foto = $dadosContato['foto'];
 
     //recebe o objeto de array referente a nova foto que podera ser enviada ao servidor
-    $file = $arrayDados['file'];
+    $file = $dadosContato['file'];
     //validação para verificar se o objeto está vazio
     if(!empty($dadosContato))
     {
 
         //validaçao de caixa vazia dos elementos nome, celular e email
         //pois são obrigatorios no bd 
-        if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail'])){
+        if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail']) && !empty($dadosContato['sltEstado'])){
 
             if(!empty($id) && $id != 0 && is_numeric($id)) {
 
@@ -99,24 +104,43 @@ function atualizarContato ($dadosContato, $id)
                     
                     //permanece a mesma foto no bd
                     $novaFoto = $foto;
+
                 }
                //criaçao do array de dados que sera encaminhado a model,
                //para inserir no bd, é importante criar este array conforme
                //as necessidades de manipulação do BD.
                //obs: criar as chaves do array conforme os nomes dos00 atributos 
                $arrayDados = array (
-                   "nome" => $dadosContato['txtNome'],
+                   "nome"     => $dadosContato['txtNome'],
                    "telefone" => $dadosContato['txtTelefone'],
-                   "celular" => $dadosContato['txtCelular'],
-                   "email" => $dadosContato['txtEmail'],
-                   "obs" => $dadosContato['txtObs'],
+                   "celular"  => $dadosContato['txtCelular'],
+                   "email"    => $dadosContato['txtEmail'],
+                   "obs"      => $dadosContato['txtObs'],
+                   "foto"     => $novaFoto,
+                   "idestado" => $dadosContato['sltEstado']
                );
 
                //import do arquivo d emodelagem para manipular o bd
                require_once('model/bd/contato.php');
                //chama a funçao que fara o insert no bd
-                if (insertContato($arrayDados))
+                if (insertContato($arrayDados)){
+
+                    //validaçao para verificar se sera necessario apagar a foto antiga 
+                    //essa variavel foi ativada em true na linha 105, quando realizamos
+                    //o upload de uma nova foto para o servidor
+                    if($statusUpload)
+                    {
+
+                        //apaga a foto antiga da pasta o servidor
+                        unlink(DIRETORIO_FILE_UPLOAD.$foto);
+
+                    }
+                    
+
                     return true;
+
+                }
+                    
                 else
                     return array('idErro' => 1, 'message' => 'não foi posivel inserir os dados no banco de dados');   
             } 
