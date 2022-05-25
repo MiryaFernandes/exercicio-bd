@@ -10,7 +10,7 @@
  * 
 */
 
-require_once('modulo/config.php');
+require_once(SRC.'modulo/config.php');
 
 //função para receber dados da view w encainhar para a model(inserir)
 function inserirContato ($dadosContato, $file)
@@ -70,7 +70,7 @@ function inserirContato ($dadosContato, $file)
 
 }
 
-//função para receber dados da view w encainhar para a model(atualizar)
+//função para receber dados da view e encaminhar para a model(atualizar)
 function atualizarContato ($dadosContato, $id)
 {
 
@@ -177,14 +177,14 @@ function excluirContato($arrayDados)
         require_once('model/bd/contato.php');
 
         //import do arquivo de configuraçoes do projeto
-        require_once('modulo/config.php');
+        require_once(SRC.'modulo/config.php');
 
         //chama a função do model e valida se o retorno foi verdadeiro ou falso
         if (deleteContato($id))
         {
             //unlink() - funçao para apagar um arquivo de um diretorio
             //permite apagar a foto fisicamente do diretorio do servidor
-            if(unlink(DIRETORIO_FILE_UPLOAD.$foto))
+            if (@unlink(SRC.DIRETORIO_FILE_UPLOAD.$foto))
                 return true;
             else
             return array ('idErro' => 5,
@@ -212,7 +212,7 @@ function listarContato ()
 {
 
     //import do arquivo que vai buscar os dados no bd
-    require_once('model/bd/contato.php');
+    require_once(SRC.'model/bd/contato.php');
 
     //import do arquivo que vai buscar os dados no bd
     $dados = selectAllContato();  
@@ -230,7 +230,7 @@ function buscarContato($id)
     if($id !=0 && !empty($id) && is_numeric($id))
     {
         //import do arquivo de contato
-        require_once('model/bd/contato.php');
+        require_once(SRC.'model/bd/contato.php');
 
         $dados = selectByIdContato($id);
 

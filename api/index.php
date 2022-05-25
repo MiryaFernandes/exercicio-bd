@@ -1,4 +1,3 @@
-
 <?php
 
 /**************************************************************
@@ -27,7 +26,25 @@ header('Content-Type: application/json');
 
 //recebe a URL digitada na requisição
 $urlHTTP = (string) $_GET['url'];
-var_dump($urlHTTP);
-die;
+
+//converte a url solicitada em um array para dividir a opções de busca, que é separada pela "/"
+$url = explode('/', $urlHTTP);
+
+//verifica qual a API será encaminhada a requisição (contatos, estados, etc)
+switch (strtoupper($url[0])) {
+
+    case 'CONTATOS':
+        require_once('contatosAPI/index.php');
+
+        break;
+
+    case 'ESTADOS':
+        
+        require_once('estadoAPI/index.php');
+
+        break;
+}
+
+
 
 ?>

@@ -223,8 +223,11 @@ function selectAllContato()
  
          }
          fecharMysql($conexao);
- 
-          return $arrayDados;
+
+         if(isset($arrayDados))
+            return $arrayDados;
+        else
+          return false;
     
  }
 ?>
